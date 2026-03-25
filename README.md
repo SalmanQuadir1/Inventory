@@ -1,4 +1,4 @@
-# Medical Store Inventory Management System
+# FGH Store - Inventory Management System
 
 A production-ready comprehensive, full-stack  Inventory Management application built using modern tech stack.
 

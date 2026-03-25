@@ -1,16 +1,16 @@
 -- Insert default admin user (Password is 'admin' encrypted with BCrypt)
 INSERT INTO users (username, password, name, email, role, enabled, created_at, created_by) 
-VALUES ('admin', '$2a$10$l8wZgxscJ4nU/CYaamnjmOaNmh11uUGBaLdlpnTU98KjXNzI9mGJ6', 'System Administrator', 'admin@omnistore.com', 'ADMIN', true, NOW(), 'SYSTEM')
+VALUES ('admin', '$2a$10$l8wZgxscJ4nU/CYaamnjmOaNmh11uUGBaLdlpnTU98KjXNzI9mGJ6', 'System Administrator', 'admin@fghstore.com', 'ADMIN', true, NOW(), 'SYSTEM')
 ON DUPLICATE KEY UPDATE password='$2a$10$l8wZgxscJ4nU/CYaamnjmOaNmh11uUGBaLdlpnTU98KjXNzI9mGJ6';
 
 -- Insert default pharmacist
 INSERT INTO users (username, password, name, email, role, enabled, created_at, created_by) 
-VALUES ('pharma', '$2a$10$l8wZgxscJ4nU/CYaamnjmOaNmh11uUGBaLdlpnTU98KjXNzI9mGJ6', 'Head Manager', 'pharma@omnistore.com', 'PHARMACIST', true, NOW(), 'SYSTEM')
+VALUES ('pharma', '$2a$10$l8wZgxscJ4nU/CYaamnjmOaNmh11uUGBaLdlpnTU98KjXNzI9mGJ6', 'Head Manager', 'pharma@fghstore.com', 'PHARMACIST', true, NOW(), 'SYSTEM')
 ON DUPLICATE KEY UPDATE password='$2a$10$l8wZgxscJ4nU/CYaamnjmOaNmh11uUGBaLdlpnTU98KjXNzI9mGJ6';
 
 -- Insert default staff
 INSERT INTO users (username, password, name, email, role, enabled, created_at, created_by) 
-VALUES ('staff', '$2a$10$l8wZgxscJ4nU/CYaamnjmOaNmh11uUGBaLdlpnTU98KjXNzI9mGJ6', 'Sales Staff', 'staff@omnistore.com', 'STAFF', true, NOW(), 'SYSTEM')
+VALUES ('staff', '$2a$10$l8wZgxscJ4nU/CYaamnjmOaNmh11uUGBaLdlpnTU98KjXNzI9mGJ6', 'Sales Staff', 'staff@fghstore.com', 'STAFF', true, NOW(), 'SYSTEM')
 ON DUPLICATE KEY UPDATE password='$2a$10$l8wZgxscJ4nU/CYaamnjmOaNmh11uUGBaLdlpnTU98KjXNzI9mGJ6';
 
 -- Insert some dummy suppliers
