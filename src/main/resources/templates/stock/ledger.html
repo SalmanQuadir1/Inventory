@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout :: layout(pageTitle='Stock Ledger', content=~{this :: #main-content})}">
+
+<body>
+    <div id="main-content" class="space-y-8">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tight">Stock Ledger</h1>
+                <p class="text-slate-500 mt-1 font-medium text-sm">
+                    Complete audit trail of all material movements for this item.
+                </p>
+            </div>
+            <div class="flex gap-4">
+                <a th:href="@{/products}"
+                    class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-200 transition-all">
+                    Back to Products
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${successMessage}" class="p-4 bg-emerald-50 text-emerald-700 rounded-xl font-bold border border-emerald-100">
+            <p th:text="${successMessage}"></p>
+        </div>
+        <div th:if="${errorMessage}" class="p-4 bg-rose-50 text-rose-700 rounded-xl font-bold border border-rose-100">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <!-- Future Transfer Stock Form can go here -->
+
+        <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden mt-8">
+            <div class="px-8 py-5 border-b border-slate-100 bg-slate-50/30 flex justify-between items-center">
+                <h2 class="text-xs font-black text-slate-600 uppercase tracking-widest">Transaction History</h2>
+            </div>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50/50 border-b border-slate-100">
+                        <th class="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Date</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Type</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Reference</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">From Bin</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">To Bin</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest text-right">Qty</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    <tr th:each="t : ${transactions}" class="hover:bg-slate-50/50 transition-colors">
+                        <td class="px-6 py-4 text-slate-600 font-medium text-xs whitespace-nowrap" th:text="${#temporals.format(t.transactionDate, 'dd-MM-yyyy HH:mm')}"></td>
+                        <td class="px-6 py-4">
+                            <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest"
+                                  th:classappend="${t.type.name() == 'IN' ? 'bg-emerald-100 text-emerald-700' : (t.type.name() == 'OUT' ? 'bg-rose-100 text-rose-700' : 'bg-indigo-100 text-indigo-700')}"
+                                  th:text="${t.type}"></span>
+                        </td>
+                        <td class="px-6 py-4 font-mono text-sm tracking-wider text-slate-600" th:text="${t.reference}"></td>
+                        <td class="px-6 py-4 text-slate-800 font-bold text-sm" th:text="${t.fromBin != null ? t.fromBin.name : '-'}"></td>
+                        <td class="px-6 py-4 text-slate-800 font-bold text-sm" th:text="${t.toBin != null ? t.toBin.name : '-'}"></td>
+                        <td class="px-6 py-4 text-right font-black text-slate-900" th:text="${t.quantity}"></td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(transactions)}">
+                        <td colspan="6" class="px-6 py-12 text-center text-slate-400 font-bold uppercase tracking-widest text-sm">No transactions recorded for this item.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

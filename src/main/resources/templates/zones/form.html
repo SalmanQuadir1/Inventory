@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout :: layout(pageTitle='New Zone', content=~{this :: #main-content})}">
+
+<body>
+    <div id="main-content" class="space-y-8 max-w-3xl mx-auto">
+        <div>
+            <h1 class="text-3xl font-black text-slate-900 tracking-tight" th:text="${zone.id != null ? 'Edit Zone' : 'New Zone'}">Zone</h1>
+        </div>
+
+        <form th:action="@{/zones/save(warehouseId=${warehouseId})}" th:object="${zone}" method="post" class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm space-y-6">
+            <input type="hidden" th:field="*{id}">
+            
+            <div class="space-y-1.5">
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Zone Name *</label>
+                <input type="text" th:field="*{name}" required class="block w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none" placeholder="e.g. Aisle A">
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div class="space-y-1.5">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Code</label>
+                    <input type="text" th:field="*{code}" class="block w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900" placeholder="Z-01">
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Type Classification</label>
+                    <select th:field="*{type}" class="block w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900">
+                        <option value="GENERAL">General Storage</option>
+                        <option value="COLD">Cold Storage</option>
+                        <option value="TALL_RACK">Tall Rack</option>
+                        <option value="BULK">Bulk Storage</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-100 flex justify-end gap-4">
+                <a th:href="@{/warehouses/{id}(id=${warehouseId})}" class="px-6 py-3 bg-slate-100 text-slate-600 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-slate-200 transition-all">Cancel</a>
+                <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200">Save Zone</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

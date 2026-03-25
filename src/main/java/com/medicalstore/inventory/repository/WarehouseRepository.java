@@ -1,0 +1,13 @@
+package com.medicalstore.inventory.repository;
+
+import com.medicalstore.inventory.entity.Warehouse;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface WarehouseRepository extends JpaRepository<Warehouse, Long> {
+    Optional<Warehouse> findByName(String name);
+    Optional<Warehouse> findByCode(String code);
+}

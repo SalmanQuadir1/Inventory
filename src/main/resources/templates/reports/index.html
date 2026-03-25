@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout :: layout(pageTitle='Intelligence Center', content=~{this :: #main-content})}">
+
+<body>
+    <div id="main-content" class="space-y-8">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tight">Intelligence Center</h1>
+                <p class="text-slate-500 mt-1 font-medium">Analyze operational data, track revenue, and monitor
+                    inventory health.</p>
+            </div>
+        </div>
+
+        <!-- Inventory Value Highlight -->
+        <div class="p-8 bg-indigo-600 rounded-[2.5rem] shadow-2xl shadow-indigo-200 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 p-12 opacity-10 group-hover:scale-110 transition-transform duration-700">
+                <svg class="w-48 h-48 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                    </path>
+                </svg>
+            </div>
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <p class="text-[10px] font-black text-indigo-200 uppercase tracking-[0.2em] mb-2">Portfolio
+                        Valuation</p>
+                    <h2 class="text-4xl font-black text-white tracking-tight" th:text="${'₹' + inventoryValue}">₹0.00
+                    </h2>
+                    <p class="text-indigo-100 text-sm mt-2 font-medium">Total net value of current inventory assets
+                        in stock.</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="h-12 w-1px bg-white/20 hidden md:block"></div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-black text-indigo-200 uppercase tracking-widest leading-none mb-1">
+                            Status</p>
+                        <p class="text-sm font-bold text-white uppercase tracking-widest">Optimized</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Categories Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Low Stock Report -->
+            <a th:href="@{/reports/low-stock}"
+                class="group p-6 bg-white border border-slate-100 rounded-3xl hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300">
+                <div
+                    class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-500 mb-4 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-sm font-black text-slate-900 uppercase tracking-widest mb-1">Low Stock</h3>
+                <p class="text-xs text-slate-500 font-medium leading-relaxed">Alerts for items below minimum quantity.
+                </p>
+            </a>
+
+            <!-- Expired Report -->
+            <a th:href="@{/reports/expired}"
+                class="group p-6 bg-white border border-slate-100 rounded-3xl hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300">
+                <div
+                    class="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-500 mb-4 group-hover:bg-rose-500 group-hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-sm font-black text-slate-900 uppercase tracking-widest mb-1">Expired</h3>
+                <p class="text-xs text-slate-500 font-medium leading-relaxed">Tracking items past the safety shelf life.
+                </p>
+            </a>
+
+            <!-- Sales Report -->
+            <a th:href="@{/reports/sales}"
+                class="group p-6 bg-white border border-slate-100 rounded-3xl hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300">
+                <div
+                    class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-500 mb-4 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-sm font-black text-slate-900 uppercase tracking-widest mb-1">Sales</h3>
+                <p class="text-xs text-slate-500 font-medium leading-relaxed">Transactions and revenue performance logs.
+                </p>
+            </a>
+
+            <!-- Purchase Report -->
+            <a th:href="@{/reports/purchases}"
+                class="group p-6 bg-white border border-slate-100 rounded-3xl hover:shadow-xl hover:shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300">
+                <div
+                    class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-500 mb-4 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-sm font-black text-slate-900 uppercase tracking-widest mb-1">Purchases</h3>
+                <p class="text-xs text-slate-500 font-medium leading-relaxed">Investment tracking for new stock
+                    acquisition.</p>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

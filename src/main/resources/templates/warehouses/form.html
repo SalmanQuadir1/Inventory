@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout :: layout(pageTitle=${warehouse.id != null ? 'Edit Store' : 'New Store Front'}, content=~{this :: #main-content})}">
+
+<body>
+    <div id="main-content" class="space-y-8 max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tight"
+                    th:text="${warehouse.id != null ? 'Modify Branch' : 'Establish Branch'}">Branch Setup
+                </h1>
+                <p class="text-slate-500 mt-1 font-medium">Configure spatial tracking and identity properties for this location.</p>
+            </div>
+            <a th:href="@{/warehouses}"
+                class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-200 transition-all">
+                Directory
+            </a>
+        </div>
+
+        <div th:if="${successMessage}" class="p-4 bg-emerald-50 text-emerald-700 rounded-xl font-bold flex items-center shadow-sm">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="p-4 bg-rose-50 text-rose-700 rounded-xl font-bold flex items-center shadow-sm">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Form Section -->
+        <form th:action="@{/warehouses/save}" th:object="${warehouse}" method="post" class="space-y-12">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-xl shadow-slate-200/50 space-y-8">
+                
+                <section class="space-y-6">
+                    <h2 class="text-sm font-black text-indigo-600 uppercase tracking-[0.2em] flex items-center">
+                        <span class="w-8 h-px bg-indigo-100 mr-3"></span>
+                        Location Identity
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1.5 focus-within:scale-[1.01] transition-transform">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Branch Name *</label>
+                            <input type="text" th:field="*{name}" required
+                                class="block w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none" placeholder="e.g. Central City Medical">
+                        </div>
+                        <div class="space-y-1.5 focus-within:scale-[1.01] transition-transform">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Internal Store Code</label>
+                            <input type="text" th:field="*{code}" required
+                                class="block w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none" placeholder="e.g. CCM-01">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="space-y-6">
+                    <h2 class="text-sm font-black text-indigo-600 uppercase tracking-[0.2em] flex items-center">
+                        <span class="w-8 h-px bg-indigo-100 mr-3"></span>
+                        Geographic Data
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-1.5 focus-within:scale-[1.01] transition-transform">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Physical Location Address</label>
+                            <input type="text" th:field="*{location}" required
+                                class="block w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none" placeholder="123 Health Ave, NY">
+                        </div>
+                        <div class="space-y-1.5 focus-within:scale-[1.01] transition-transform">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Lead Store Manager</label>
+                            <input type="text" th:field="*{managerName}"
+                                class="block w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none" placeholder="Dr. John Doe">
+                        </div>
+                    </div>
+                </section>
+
+                <div class="pt-8 border-t border-slate-100 flex justify-end gap-4">
+                    <a th:href="@{/warehouses}" class="px-8 py-3.5 bg-slate-100 text-slate-600 rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-slate-200 transition-all">Discard</a>
+                    <button type="submit" class="px-8 py-3.5 bg-indigo-600 text-white rounded-2xl text-sm font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-200 hover:-translate-y-1">Commit Branch Data</button>
+                </div>
+            </div>
+            
+            <div class="bg-indigo-50 rounded-3xl p-6 border border-indigo-100/50 mt-8 mb-12">
+                <p class="text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em] mb-2">Architectural Note</p>
+                <p class="text-[11px] font-medium text-indigo-800 leading-relaxed">
+                   Upon establishing this location, users can be assigned directly to its workforce. All transactions explicitly linked point to this unique location vector.
+                </p>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

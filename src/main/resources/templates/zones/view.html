@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout :: layout(pageTitle='Zone Details', content=~{this :: #main-content})}">
+
+<body>
+    <div id="main-content" class="space-y-8">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tight" th:text="${zone.name}">Zone Name</h1>
+                <p class="text-slate-500 mt-1 font-medium text-sm">
+                    Zone within <span class="font-bold border-r pr-2 mr-2" th:text="${zone.warehouse.name}"></span>
+                    Type: <span class="px-2 py-0.5 bg-slate-200 rounded text-xs text-slate-700 font-bold" th:text="${zone.type}"></span>
+                </p>
+            </div>
+            <div class="flex gap-4">
+                <a th:href="@{/warehouses/{id}(id=${zone.warehouse.id})}"
+                    class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-slate-200 transition-all">
+                    Back to Warehouse
+                </a>
+                <a th:href="@{/bins/new(zoneId=${zone.id})}"
+                    class="px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200">
+                    Add Bin
+                </a>
+            </div>
+        </div>
+
+        <div th:if="${successMessage}" class="p-4 bg-emerald-50 text-emerald-700 rounded-xl font-bold">
+            <p th:text="${successMessage}"></p>
+        </div>
+
+        <div class="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden mt-8">
+            <div class="px-8 py-5 border-b border-slate-100 bg-slate-50/30">
+                <h2 class="text-xs font-black text-slate-600 uppercase tracking-widest">Bins inside Zone <span th:text="${zone.name}"></span></h2>
+            </div>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50/50 border-b border-slate-100">
+                        <th class="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Bin Name / Location</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest">Barcode</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-500 uppercase tracking-widest text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    <tr th:each="b : ${bins}" class="hover:bg-slate-50/50 transition-colors">
+                        <td class="px-6 py-4 font-bold text-slate-800" th:text="${b.name}"></td>
+                        <td class="px-6 py-4">
+                            <span class="font-mono bg-slate-100 px-2 py-1 rounded text-sm tracking-wider" th:text="${b.barcode}"></span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <!-- Could link to stock in this bin -->
+                            <button class="text-slate-400 cursor-not-allowed text-sm font-bold" disabled>No actions yet</button>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(bins)}">
+                        <td colspan="3" class="px-6 py-12 text-center text-slate-400 font-bold uppercase tracking-widest text-sm">No Bins Found. Add a Bin.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

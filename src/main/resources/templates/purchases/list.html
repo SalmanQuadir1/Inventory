@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout :: layout(pageTitle='Purchase Ledger', content=~{this :: #main-content})}">
+
+<body>
+    <div id="main-content" class="space-y-8">
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tight">Stock Acquisition</h1>
+                <p class="text-slate-500 mt-1 font-medium">Track and manage inventory purchase orders and supplier
+                    invoices.</p>
+            </div>
+            <a th:href="@{/purchases/new}"
+                class="flex items-center px-6 py-3 bg-indigo-600 text-white font-bold rounded-2xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Create Purchase
+            </a>
+        </div>
+
+        <!-- Purchases Table -->
+        <div class="overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full border-separate border-spacing-y-3">
+                    <thead>
+                        <tr class="text-left">
+                            <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                Transaction ID</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Order
+                                Timeline</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                Supplier Entity</th>
+                            <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total
+                                Investment</th>
+                            <th
+                                class="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                Documentation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="purchase : ${purchases}" class="bg-white group">
+                            <td
+                                class="px-6 py-5 rounded-l-3xl border-y border-l border-slate-100 group-hover:bg-slate-50 transition-colors">
+                                <span
+                                    class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-xs font-black tracking-widest"
+                                    th:text="'PO-' + ${purchase.id}"></span>
+                            </td>
+                            <td class="px-6 py-5 border-y border-slate-100 group-hover:bg-slate-50 transition-colors">
+                                <div class="flex items-center text-sm font-bold text-slate-700">
+                                    <svg class="w-4 h-4 mr-2 text-slate-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                    <span th:text="${#temporals.format(purchase.purchaseDate, 'dd MMM yyyy')}"></span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 border-y border-slate-100 group-hover:bg-slate-50 transition-colors">
+                                <div class="flex items-center">
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 text-[10px] font-black mr-3">
+                                        <span
+                                            th:text="${#strings.substring(purchase.supplierName,0,1).toUpperCase()}">S</span>
+                                    </div>
+                                    <span class="text-sm font-black text-slate-900"
+                                        th:text="${purchase.supplierName}"></span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-5 border-y border-slate-100 group-hover:bg-slate-50 transition-colors">
+                                <span class="text-sm font-black text-indigo-600"
+                                    th:text="'₹' + ${purchase.totalAmount}"></span>
+                            </td>
+                            <td
+                                class="px-6 py-5 rounded-r-3xl border-y border-r border-slate-100 group-hover:bg-slate-50 transition-colors text-center">
+                                <a th:href="@{/purchases/{id}(id=${purchase.id})}"
+                                    class="inline-flex items-center px-4 py-2 bg-slate-50 text-slate-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all">
+                                    <svg class="w-3 h-3 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                        </path>
+                                    </svg>
+                                    Manifest
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(purchases)}">
+                            <td colspan="5"
+                                class="px-6 py-20 text-center text-slate-400 font-bold uppercase tracking-widest">
+                                No Acquisition Records Found
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination Controls -->
+            <div th:if="${totalPages > 1}" class="flex flex-col sm:flex-row justify-between items-center bg-white px-6 py-4 border-t border-slate-100 rounded-b-3xl gap-4">
+                <div class="text-[11px] font-black text-slate-400 uppercase tracking-widest text-center sm:text-left">
+                    Showing <span th:text="${(currentPage - 1) * 10 + 1}"></span> to <span th:text="${(currentPage * 10) > totalItems ? totalItems : (currentPage * 10)}"></span> of <span th:text="${totalItems}"></span> results
+                </div>
+                <div class="flex space-x-2">
+                    <a th:if="${currentPage > 1}" th:href="@{'/purchases?page=1' + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}" class="px-3 py-1 bg-slate-50 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-200 transition-colors">First</a>
+                    <a th:if="${currentPage > 1}" th:href="@{'/purchases?page=' + ${currentPage - 1} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}" class="px-3 py-1 bg-slate-50 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-200 transition-colors">Prev</a>
+                    
+                    <span class="px-3 py-1 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-sm">Page [[${currentPage}]] of [[${totalPages}]]</span>
+                    
+                    <a th:if="${currentPage < totalPages}" th:href="@{'/purchases?page=' + ${currentPage + 1} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}" class="px-3 py-1 bg-slate-50 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-200 transition-colors">Next</a>
+                    <a th:if="${currentPage < totalPages}" th:href="@{'/purchases?page=' + ${totalPages} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir}}" class="px-3 py-1 bg-slate-50 text-slate-600 rounded-lg text-sm font-bold hover:bg-slate-200 transition-colors">Last</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

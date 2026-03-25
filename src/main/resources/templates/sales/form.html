@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout :: layout(pageTitle='POS Terminal', content=~{this :: #main-content})}">
+
+<body>
+    <div id="main-content" x-data="posSystem()" class="h-[calc(100vh-10rem)] -mt-4 flex flex-col md:flex-row shadow-2xl rounded-3xl overflow-hidden bg-slate-50 border border-slate-200">
+        
+        <!-- Left: Product Grid & Search -->
+        <div class="w-full md:w-2/3 flex flex-col bg-slate-100/50 h-full relative z-0">
+            <!-- Top Search Bar & Categories -->
+            <div class="px-6 py-5 bg-white border-b border-slate-200 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 shadow-sm z-10">
+                <div class="relative flex-1 group">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <input type="text" x-model="searchQuery" @input.debounce.300ms="fetchProducts()" placeholder="Search catalog..." class="block w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none">
+                </div>
+                <!-- Categories Dropdown -->
+                <div class="relative w-full sm:w-48 group">
+                    <select x-model="selectedCategory" @change="fetchProducts()" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none appearance-none cursor-pointer">
+                        <option value="">All Categories</option>
+                        <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Scrollable Grid -->
+            <div class="flex-1 overflow-y-auto p-6 scroll-smooth">
+                <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 pb-20">
+                    <template x-for="prod in availableProducts" :key="prod.id">
+                        <div @click="addToCart(prod)" class="bg-white rounded-3xl p-4 shadow-sm hover:shadow-xl hover:-translate-y-1 cursor-pointer transition-all border border-slate-100 flex flex-col items-center text-center group">
+                            <!-- Product Image Box -->
+                            <div class="w-full aspect-square mb-4 rounded-2xl relative overflow-hidden bg-slate-50 flex items-center justify-center border border-slate-100 group-hover:border-indigo-100 transition-colors">
+                                <img x-show="prod.imagePath" :src="prod.imagePath" class="object-cover w-full h-full absolute inset-0">
+                                <span x-show="!prod.imagePath" class="text-4xl font-black text-indigo-200" x-text="prod.productName.substring(0,1).toUpperCase()"></span>
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-[13px] leading-tight line-clamp-2 min-h-[2.5rem]" x-text="prod.productName"></h3>
+                            <p class="text-indigo-600 font-black mt-2 text-lg tracking-tight">₹<span x-text="prod.sellingPrice"></span></p>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Stock: <span :class="prod.quantity < 5 ? 'text-rose-500' : ''" x-text="prod.quantity"></span></p>
+                        </div>
+                    </template>
+                    <div x-show="availableProducts.length === 0" class="col-span-full py-12 text-center text-slate-400 font-black uppercase tracking-widest">
+                        <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        No products found
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right: Cart & Checkout (Form) -->
+        <form th:action="@{/sales/save}" th:object="${saleDto}" method="post" id="posForm" class="w-full md:w-1/3 bg-white border-l border-slate-200 flex flex-col z-20 shadow-[-10px_0_30px_rgba(0,0,0,0.02)] h-full relative">
+            
+            <div th:if="${#fields.hasErrors('*')}" class="absolute top-4 left-4 right-4 z-50 p-4 bg-rose-50 border border-rose-100 rounded-2xl shadow-lg">
+                <p class="font-black text-[10px] text-rose-700 uppercase tracking-widest mb-1">Validation Error</p>
+                <ul class="text-xs font-bold text-rose-600 list-disc ml-4">
+                    <li th:each="err : ${#fields.allErrors()}" th:text="${err}"></li>
+                </ul>
+            </div>
+            
+            <div th:if="${errorMessage}" class="absolute top-4 left-4 right-4 z-50 p-4 bg-rose-50 border border-rose-100 rounded-2xl shadow-lg flex items-center">
+                <p class="text-xs font-bold text-rose-700" th:text="${errorMessage}"></p>
+            </div>
+
+            <!-- Cart Header -->
+            <div class="px-6 py-5 border-b border-slate-100 bg-white">
+                <h2 class="text-xl font-black text-slate-800 tracking-tight flex items-center justify-between">
+                    Current Order
+                    <span class="bg-indigo-100 text-indigo-700 text-xs px-2.5 py-1 rounded-lg" x-text="items.length + ' Items'"></span>
+                </h2>
+                <div class="mt-4 space-y-3">
+                    <select id="customerId" name="customerId" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none appearance-none cursor-pointer">
+                        <option value="">Walk-in Customer (Unregistered)</option>
+                        <template x-for="cust in customers" :key="cust.id">
+                            <option :value="cust.id" x-text="cust.name + ' (' + (cust.phone || 'No Phone') + ')'"></option>
+                        </template>
+                    </select>
+                    <input type="text" th:field="*{customerName}" placeholder="Walk-in Name (If Unregistered)" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none">
+                    <input type="tel" th:field="*{phoneNumber}" placeholder="Walk-in Phone (If Unregistered)" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none">
+                </div>
+            </div>
+            
+            <!-- Cart Items (Scrollable) -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50">
+                <template x-for="(item, index) in items" :key="index">
+                    <div class="flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl group shadow-sm">
+                        <div class="flex-1 pr-4">
+                            <input type="hidden" :name="'items['+index+'].productId'" x-model="item.productId">
+                            <input type="hidden" :name="'items['+index+'].price'" x-model="item.price">
+                            <h4 class="font-bold text-slate-800 text-[13px] leading-tight line-clamp-1" x-text="item.productName"></h4>
+                            <div class="text-xs font-black text-indigo-600 tracking-wider mt-1">₹<span x-text="item.price"></span> <span class="text-slate-400 font-bold ml-1">each</span></div>
+                        </div>
+                        <div class="flex items-center space-x-2 bg-slate-50 border border-slate-100 rounded-xl p-1 shrink-0">
+                            <button type="button" @click="if(item.quantity>1) item.quantity--" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-slate-200 rounded-lg transition-colors font-black">-</button>
+                            <input type="number" :name="'items['+index+'].quantity'" x-model.number="item.quantity" class="w-8 text-center bg-transparent text-sm font-black text-slate-800 outline-none appearance-none p-0" min="1" readonly>
+                            <button type="button" @click="item.quantity++" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-slate-200 rounded-lg transition-colors font-black">+</button>
+                        </div>
+                        <button type="button" @click="items.splice(index, 1)" class="ml-2 w-8 h-8 flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                </template>
+                <div x-show="items.length === 0" class="h-full flex flex-col items-center justify-center text-slate-300 space-y-4">
+                    <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <p class="font-black uppercase tracking-widest text-xs">Cart is empty</p>
+                </div>
+            </div>
+            
+            <!-- Checkout Summary -->
+            <div class="px-6 py-5 bg-slate-900 text-white z-10">
+                <div class="space-y-2 mb-4">
+                    <div class="flex justify-between items-center text-[10px] font-black text-slate-400 tracking-widest uppercase pb-2 border-b border-slate-800">
+                        <span>Subtotal</span>
+                        <span x-text="'₹' + subTotal()"></span>
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] font-black text-slate-400 tracking-[0.2em] uppercase py-2 border-b border-slate-800 focus-within:text-white transition-colors">
+                        <span>Discount</span>
+                        <div class="flex items-center w-24">
+                            <span class="mr-1 text-slate-500">₹</span>
+                            <input type="number" step="0.01" th:field="*{discountAmount}" x-model.number="discount" class="bg-transparent w-full outline-none text-right font-bold text-sm text-white focus:bg-slate-800 px-1 rounded transition-colors" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-end pb-2 pt-3">
+                        <span class="text-[10px] font-black text-slate-400 tracking-widest uppercase mb-1">Total Payable</span>
+                        <span class="text-3xl font-black tracking-tighter text-emerald-400 leading-none" x-text="'₹' + finalTotal()"></span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-3 mb-5">
+                    <label class="cursor-pointer relative group">
+                        <input type="radio" th:field="*{paymentMethod}" value="CASH" class="peer sr-only">
+                        <div class="py-3 text-center border border-slate-700 rounded-xl peer-checked:border-emerald-500 peer-checked:bg-emerald-500/10 peer-checked:text-emerald-400 font-black transition-all text-[11px] tracking-widest uppercase text-slate-500 hover:border-slate-500 hover:text-slate-300">Cash</div>
+                    </label>
+                    <label class="cursor-pointer relative group">
+                        <input type="radio" th:field="*{paymentMethod}" value="CARD" class="peer sr-only">
+                        <div class="py-3 text-center border border-slate-700 rounded-xl peer-checked:border-indigo-500 peer-checked:bg-indigo-500/10 peer-checked:text-indigo-400 font-black transition-all text-[11px] tracking-widest uppercase text-slate-500 hover:border-slate-500 hover:text-slate-300">Card / UPI</div>
+                    </label>
+                    <label class="cursor-pointer relative group">
+                        <input type="radio" th:field="*{paymentMethod}" value="CREDIT" class="peer sr-only" @click="if(!document.getElementById('customerId').value){ alert('You must select a registered Customer from the dropdown to checkout on Khata Credit!'); }">
+                        <div class="py-3 text-center border border-slate-700 rounded-xl peer-checked:border-rose-500 peer-checked:bg-rose-500/10 peer-checked:text-rose-400 font-black transition-all text-[11px] tracking-widest uppercase text-slate-500 hover:border-slate-500 hover:text-slate-300">Khata</div>
+                    </label>
+                </div>
+                
+                <button type="submit" :disabled="items.length === 0" class="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-900 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all disabled:opacity-50 disabled:grayscale active:scale-95 flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2 -ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    Collect Payment
+                </button>
+            </div>
+        </form>
+
+        <script th:inline="javascript">
+            function posSystem() {
+                const initialItems = /*[[${saleDto.items != null ? saleDto.items : '[]'}]]*/ [];
+                
+                return {
+                    availableProducts: [],
+                    customers: [],
+                    searchQuery: '',
+                    selectedCategory: '',
+                    items: initialItems,
+                    discount: /*[[${saleDto.discountAmount != null ? saleDto.discountAmount : 0.00}]]*/ 0.00,
+                    
+                    async init() {
+                        this.fetchProducts();
+                        this.fetchCustomers();
+                    },
+                    
+                    async fetchCustomers() {
+                        try {
+                            const res = await fetch('/customers/api/search');
+                            this.customers = await res.json();
+                        } catch(e) { console.error('Error fetching customers', e); }
+                    },
+                    
+                    async fetchProducts() {
+                        try {
+                            let url = '/products/api/search?size=50';
+                            if (this.searchQuery && this.searchQuery.length >= 2) {
+                                url += '&keyword=' + encodeURIComponent(this.searchQuery);
+                            }
+                            if (this.selectedCategory) {
+                                url += '&category=' + encodeURIComponent(this.selectedCategory);
+                            }
+                            const res = await fetch(url);
+                            const data = await res.json();
+                            this.availableProducts = data.content ? data.content : data;
+                        } catch(e) { console.error('Error fetching products', e); }
+                    },
+                    
+                    addToCart(prod) {
+                        const existing = this.items.find(i => i.productId === prod.id);
+                        if (existing) {
+                            existing.quantity++;
+                        } else {
+                            this.items.push({
+                                productId: prod.id,
+                                productName: prod.productName,
+                                price: prod.sellingPrice || 0,
+                                quantity: 1
+                            });
+                        }
+                    },
+                    
+                    subTotal() {
+                        let total = 0;
+                        this.items.forEach(i => total += (i.price * i.quantity));
+                        return total.toFixed(2);
+                    },
+                    
+                    finalTotal() {
+                        const st = parseFloat(this.subTotal()) || 0;
+                        const d = parseFloat(this.discount) || 0;
+                        return Math.max(0, st - d).toFixed(2);
+                    }
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>
