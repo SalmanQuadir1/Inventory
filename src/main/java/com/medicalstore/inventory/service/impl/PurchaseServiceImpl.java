@@ -35,6 +35,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     @Transactional
+    @SuppressWarnings("null")
     public PurchaseDto createPurchase(PurchaseDto dto) {
         Supplier supplier = supplierRepository.findById(dto.getSupplierId())
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
@@ -93,6 +94,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public PurchaseDto getPurchaseById(Long id) {
         Purchase purchase = purchaseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Purchase not found"));
@@ -107,6 +109,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public org.springframework.data.domain.Page<PurchaseDto> getPaginatedPurchases(int pageNo, int pageSize, String sortField, String sortDir) {
         org.springframework.data.domain.Sort sort = sortDir.equalsIgnoreCase("asc") ? 
             org.springframework.data.domain.Sort.by(sortField).ascending() : 

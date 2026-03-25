@@ -19,6 +19,7 @@ public class SupplierServiceImpl implements SupplierService {
     private final SupplierRepository supplierRepository;
 
     @Override
+    @SuppressWarnings("null")
     public SupplierDto createSupplier(SupplierDto supplierDto) {
         Supplier supplier = mapToEntity(supplierDto);
         Supplier savedSupplier = supplierRepository.save(supplier);
@@ -26,6 +27,7 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public SupplierDto updateSupplier(Long id, SupplierDto supplierDto) {
         Supplier supplier = supplierRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
@@ -68,6 +70,7 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public SupplierDto getSupplierById(Long id) {
         Supplier supplier = supplierRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
@@ -82,6 +85,7 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public org.springframework.data.domain.Page<SupplierDto> getPaginatedSuppliers(int pageNo, int pageSize, String sortField, String sortDir) {
         org.springframework.data.domain.Sort sort = sortDir.equalsIgnoreCase("asc") ? 
             org.springframework.data.domain.Sort.by(sortField).ascending() : 
