@@ -42,7 +42,7 @@ public class ProductController {
             Model model) {
         
         java.util.Collection<Long> warehouseIds = getCurrentUserWarehouseIds();
-        org.springframework.data.domain.Page<ProductDto> page = productService.getPaginatedProducts(pageNo, pageSize, sortField, sortDir, keyword, category, warehouseIds);
+        org.springframework.data.domain.Page<ProductDto> page = productService.getPaginatedProducts(pageNo, pageSize, sortField, sortDir, keyword, category, warehouseIds, null);
         
         model.addAttribute("products", page.getContent());
         model.addAttribute("categories", productService.getDistinctCategories());
@@ -182,10 +182,11 @@ public class ProductController {
     public java.util.List<ProductDto> searchApi(
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "category", required = false) String category,
+            @RequestParam(value = "supplierId", required = false) Long supplierId,
             @RequestParam(value = "size", defaultValue = "20") int size) {
         
         java.util.Collection<Long> warehouseIds = getCurrentUserWarehouseIds();
-        java.util.List<ProductDto> products = productService.getPaginatedProducts(1, size, "productName", "asc", keyword, category, warehouseIds).getContent();
+        java.util.List<ProductDto> products = productService.getPaginatedProducts(1, size, "productName", "asc", keyword, category, warehouseIds, supplierId).getContent();
         Warehouse store = getCurrentUserStore();
         
         if (store != null) {

@@ -1,6 +1,6 @@
 # Medical Store Inventory Management System
 
-A production-ready comprehensive, full-stack Medical Store Inventory Management application built using modern tech stack.
+A production-ready comprehensive, full-stack  Inventory Management application built using modern tech stack.
 
 ## Tech Stack
 * **Language:** Java 17

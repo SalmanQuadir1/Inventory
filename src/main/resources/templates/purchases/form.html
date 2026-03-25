@@ -231,7 +231,8 @@
                             return;
                         }
                         try {
-                            const response = await fetch('/products/api/search?keyword=' + encodeURIComponent(query));
+                            const supplierId = document.getElementById('supplierId').value;
+                            const response = await fetch('/products/api/search?keyword=' + encodeURIComponent(query) + (supplierId ? '&supplierId=' + supplierId : ''));
                             const data = await response.json();
                             this.items[index].searchResults = data;
                             this.items[index].showResults = true;

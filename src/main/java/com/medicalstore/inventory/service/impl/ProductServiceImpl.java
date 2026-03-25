@@ -69,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     @SuppressWarnings("null")
-    public org.springframework.data.domain.Page<ProductDto> getPaginatedProducts(int pageNo, int pageSize, String sortField, String sortDir, String keyword, String category, java.util.Collection<Long> warehouseIds) {
+    public org.springframework.data.domain.Page<ProductDto> getPaginatedProducts(int pageNo, int pageSize, String sortField, String sortDir, String keyword, String category, java.util.Collection<Long> warehouseIds, Long supplierId) {
         org.springframework.data.domain.Sort sort = sortDir.equalsIgnoreCase("asc") 
             ? org.springframework.data.domain.Sort.by(sortField).ascending() 
             : org.springframework.data.domain.Sort.by(sortField).descending();
@@ -81,13 +81,9 @@ public class ProductServiceImpl implements ProductService {
         String safeCategory = category == null ? "" : category.trim();
 
         if (warehouseIds != null && !warehouseIds.isEmpty()) {
-            page = productRepository.searchProductsInWarehouses(safeKeyword, safeCategory, warehouseIds, pageable);
+            page = productRepository.searchProductsInWarehouses(safeKeyword, safeCategory, warehouseIds, supplierId, pageable);
         } else {
-            if (!safeKeyword.isEmpty() || !safeCategory.isEmpty()) {
-                page = productRepository.searchProductsWithCategory(safeKeyword, safeCategory, pageable);
-            } else {
-                page = productRepository.findAll(pageable);
-            }
+            page = productRepository.searchProductsWithCategoryAndSupplier(safeKeyword, safeCategory, supplierId, pageable);
         }
         
         java.util.List<ProductDto> dtoList = page.getContent().stream()

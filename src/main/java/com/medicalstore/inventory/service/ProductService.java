@@ -26,5 +26,5 @@ public interface ProductService {
 
     List<String> getDistinctCategories();
 
-    org.springframework.data.domain.Page<ProductDto> getPaginatedProducts(int pageNo, int pageSize, String sortField, String sortDir, String keyword, String category, java.util.Collection<Long> warehouseIds);
+    org.springframework.data.domain.Page<ProductDto> getPaginatedProducts(int pageNo, int pageSize, String sortField, String sortDir, String keyword, String category, java.util.Collection<Long> warehouseIds, Long supplierId);
 }
