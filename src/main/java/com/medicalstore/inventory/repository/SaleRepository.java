@@ -1,10 +1,13 @@
 package com.medicalstore.inventory.repository;
 
+import com.medicalstore.inventory.dto.MonthlyData;
+import com.medicalstore.inventory.dto.WarehousePerformance;
 import com.medicalstore.inventory.entity.Sale;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,10 +17,10 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     List<Sale> findSalesBetweenDates(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     @Query("SELECT SUM(s.totalAmount) FROM Sale s")
-    java.math.BigDecimal getTotalRevenue();
+    BigDecimal getTotalRevenue();
 
     @Query("SELECT SUM((si.price - p.purchasePrice) * si.quantity) FROM SaleItem si JOIN si.product p")
-    java.math.BigDecimal getTotalProfit();
+    BigDecimal getTotalProfit();
 
     @Query("SELECT NEW com.medicalstore.inventory.dto.MonthlyData(" +
            "FUNCTION('DATE_FORMAT', s.saleDate, '%Y-%m'), SUM(s.totalAmount), " +
@@ -25,13 +28,13 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
            "FROM Sale s JOIN s.items si JOIN si.product p " +
            "GROUP BY FUNCTION('DATE_FORMAT', s.saleDate, '%Y-%m') " +
            "ORDER BY FUNCTION('DATE_FORMAT', s.saleDate, '%Y-%m') DESC")
-    List<com.medicalstore.inventory.dto.MonthlyData> getMonthlyAnalytics();
+    List<MonthlyData> getMonthlyAnalytics();
 
     @Query("SELECT NEW com.medicalstore.inventory.dto.WarehousePerformance(" +
            "w.name, SUM(s.totalAmount), SUM((si.price - p.purchasePrice) * si.quantity), COUNT(DISTINCT s.id)) " +
            "FROM Sale s JOIN s.store w JOIN s.items si JOIN si.product p " +
            "GROUP BY w.name")
-    List<com.medicalstore.inventory.dto.WarehousePerformance> getWarehousePerformance();
+    List<WarehousePerformance> getWarehousePerformance();
 
     @Query(value = "SELECT p.product_name as productName, SUM(si.quantity) as quantitySold, " +
            "SUM(si.quantity * si.price) as revenue, " +

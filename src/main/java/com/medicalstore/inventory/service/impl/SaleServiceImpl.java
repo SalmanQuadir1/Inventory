@@ -2,16 +2,26 @@ package com.medicalstore.inventory.service.impl;
 
 import com.medicalstore.inventory.dto.SaleDto;
 import com.medicalstore.inventory.dto.SaleItemDto;
+import com.medicalstore.inventory.entity.Customer;
 import com.medicalstore.inventory.entity.Product;
 import com.medicalstore.inventory.entity.Sale;
 import com.medicalstore.inventory.entity.SaleItem;
+import com.medicalstore.inventory.entity.Warehouse;
 import com.medicalstore.inventory.exception.ResourceNotFoundException;
+import com.medicalstore.inventory.repository.CustomerRepository;
 import com.medicalstore.inventory.repository.ProductRepository;
 import com.medicalstore.inventory.repository.SaleRepository;
 import com.medicalstore.inventory.repository.UserRepository;
-import com.medicalstore.inventory.entity.Warehouse;
+import com.medicalstore.inventory.service.CustomerService;
 import com.medicalstore.inventory.service.SaleService;
+import com.medicalstore.inventory.service.StockService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,15 +32,15 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@org.springframework.transaction.annotation.Transactional
+@Transactional
 public class SaleServiceImpl implements SaleService {
 
     private final SaleRepository saleRepository;
     private final ProductRepository productRepository;
-    private final com.medicalstore.inventory.service.StockService stockService;
+    private final StockService stockService;
     private final UserRepository userRepository;
-    private final com.medicalstore.inventory.repository.CustomerRepository customerRepository;
-    private final com.medicalstore.inventory.service.CustomerService customerService;
+    private final CustomerRepository customerRepository;
+    private final CustomerService customerService;
 
     @Override
     @Transactional
@@ -55,7 +65,7 @@ public class SaleServiceImpl implements SaleService {
         sale.setStore(store);
 
         if (dto.getCustomerId() != null) {
-            com.medicalstore.inventory.entity.Customer customer = customerRepository.findById(dto.getCustomerId()).orElse(null);
+            Customer customer = customerRepository.findById(dto.getCustomerId()).orElse(null);
             sale.setCustomer(customer);
         }
 
@@ -119,20 +129,20 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     @SuppressWarnings("null")
-    public org.springframework.data.domain.Page<SaleDto> getPaginatedSales(int pageNo, int pageSize, String sortField, String sortDir) {
-        org.springframework.data.domain.Sort sort = sortDir.equalsIgnoreCase("asc") ? 
-            org.springframework.data.domain.Sort.by(sortField).ascending() : 
-            org.springframework.data.domain.Sort.by(sortField).descending();
+    public Page<SaleDto> getPaginatedSales(int pageNo, int pageSize, String sortField, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? 
+            Sort.by(sortField).ascending() : 
+            Sort.by(sortField).descending();
             
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(pageNo - 1, pageSize, sort);
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
         
-        org.springframework.data.domain.Page<Sale> page = saleRepository.findAll(pageable);
+        Page<Sale> page = saleRepository.findAll(pageable);
         
         List<SaleDto> dtoList = page.getContent().stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
                 
-        return new org.springframework.data.domain.PageImpl<>(dtoList, pageable, page.getTotalElements());
+        return new PageImpl<>(dtoList, pageable, page.getTotalElements());
     }
 
     private SaleDto mapToDto(Sale sale) {
@@ -170,7 +180,7 @@ public class SaleServiceImpl implements SaleService {
     }
 
     private Warehouse getCurrentUserStore() {
-        String username = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(username)
             .map(u -> u.getWarehouses().stream().findFirst().orElse(null))
             .orElse(null);
