@@ -20,10 +20,16 @@ public class AnalyticsDto {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class MonthlyData {
-        private String month;
+        private Object month; // Use Object to avoid signature mismatch with FUNCTION call
         private BigDecimal revenue;
         private BigDecimal profit;
+
+        public String getMonthLabel() {
+            return String.valueOf(month);
+        }
     }
 
     @Data
@@ -37,10 +43,12 @@ public class AnalyticsDto {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class WarehousePerformance {
         private String warehouseName;
         private BigDecimal revenue;
         private BigDecimal profit;
-        private long transactionCount;
+        private Long transactionCount; // Use Long to match JPA COUNT
     }
 }

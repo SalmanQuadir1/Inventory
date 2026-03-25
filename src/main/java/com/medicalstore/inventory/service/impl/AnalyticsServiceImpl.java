@@ -38,7 +38,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         if (monthlyTrend.size() >= 2) {
             BigDecimal current = monthlyTrend.get(0).getRevenue();
             BigDecimal previous = monthlyTrend.get(1).getRevenue();
-            if (previous != null && previous.compareTo(BigDecimal.ZERO) > 0) {
+            if (current != null && previous != null && previous.compareTo(BigDecimal.ZERO) > 0) {
                 growth = current.subtract(previous)
                         .divide(previous, 4, java.math.RoundingMode.HALF_UP)
                         .multiply(new BigDecimal(100))
