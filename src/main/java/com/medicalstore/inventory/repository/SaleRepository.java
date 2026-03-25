@@ -19,19 +19,19 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
     @Query("SELECT SUM((si.price - p.purchasePrice) * si.quantity) FROM SaleItem si JOIN si.product p")
     java.math.BigDecimal getTotalProfit();
 
-    @Query("SELECT NEW com.medicalstore.inventory.dto.AnalyticsDto$MonthlyData(" +
+    @Query("SELECT NEW com.medicalstore.inventory.dto.MonthlyData(" +
            "FUNCTION('DATE_FORMAT', s.saleDate, '%Y-%m'), SUM(s.totalAmount), " +
            "SUM((si.price - p.purchasePrice) * si.quantity)) " +
            "FROM Sale s JOIN s.items si JOIN si.product p " +
            "GROUP BY FUNCTION('DATE_FORMAT', s.saleDate, '%Y-%m') " +
            "ORDER BY FUNCTION('DATE_FORMAT', s.saleDate, '%Y-%m') DESC")
-    List<com.medicalstore.inventory.dto.AnalyticsDto.MonthlyData> getMonthlyAnalytics();
+    List<com.medicalstore.inventory.dto.MonthlyData> getMonthlyAnalytics();
 
-    @Query("SELECT NEW com.medicalstore.inventory.dto.AnalyticsDto$WarehousePerformance(" +
+    @Query("SELECT NEW com.medicalstore.inventory.dto.WarehousePerformance(" +
            "w.name, SUM(s.totalAmount), SUM((si.price - p.purchasePrice) * si.quantity), COUNT(DISTINCT s.id)) " +
            "FROM Sale s JOIN s.store w JOIN s.items si JOIN si.product p " +
            "GROUP BY w.name")
-    List<com.medicalstore.inventory.dto.AnalyticsDto.WarehousePerformance> getWarehousePerformance();
+    List<com.medicalstore.inventory.dto.WarehousePerformance> getWarehousePerformance();
 
     @Query(value = "SELECT p.product_name as productName, SUM(si.quantity) as quantitySold, " +
            "SUM(si.quantity * si.price) as revenue, " +

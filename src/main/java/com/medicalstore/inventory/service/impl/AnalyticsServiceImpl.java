@@ -1,6 +1,7 @@
 package com.medicalstore.inventory.service.impl;
 
 import com.medicalstore.inventory.dto.AnalyticsDto;
+import com.medicalstore.inventory.dto.MonthlyData;
 import com.medicalstore.inventory.repository.ProductRepository;
 import com.medicalstore.inventory.repository.SaleRepository;
 import com.medicalstore.inventory.service.AnalyticsService;
@@ -31,7 +32,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                         .multiply(new BigDecimal(p.getQuantity() != null ? p.getQuantity() : 0)))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        List<AnalyticsDto.MonthlyData> monthlyTrend = saleRepository.getMonthlyAnalytics();
+        List<MonthlyData> monthlyTrend = saleRepository.getMonthlyAnalytics();
         
         // Calculate growth (Simplified: Current Month vs Previous available month)
         double growth = 0;
