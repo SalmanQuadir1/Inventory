@@ -146,7 +146,7 @@
             new Chart(document.getElementById('growthChart'), {
                 type: 'line',
                 data: {
-                    labels: trendData.map(d => d.monthLabel).reverse(),
+                    labels: trendData.map(d => d.month).reverse(),
                     datasets: [{
                         label: 'Revenue',
                         data: trendData.map(d => d.revenue).reverse(),

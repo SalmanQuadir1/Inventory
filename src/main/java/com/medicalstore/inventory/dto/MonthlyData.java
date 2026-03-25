@@ -8,11 +8,14 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MonthlyData {
-    private Object month;
+    private String month;
     private BigDecimal revenue;
     private BigDecimal profit;
 
-    public String getMonthLabel() {
-        return String.valueOf(month);
+    // Custom constructor for JPA aggregate results (Object month)
+    public MonthlyData(Object month, BigDecimal revenue, BigDecimal profit) {
+        this.month = (month != null) ? String.valueOf(month) : null;
+        this.revenue = (revenue != null) ? revenue : BigDecimal.ZERO;
+        this.profit = (profit != null) ? profit : BigDecimal.ZERO;
     }
 }
