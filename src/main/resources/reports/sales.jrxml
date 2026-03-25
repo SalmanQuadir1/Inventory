@@ -39,12 +39,12 @@
                 <text><![CDATA[Date]]></text>
             </staticText>
             <staticText>
-                <reportElement x="170" y="0" width="150" height="20" uuid="b53d-885f624e-7d9a-1e1e-4c31-9a8a8e1e"/>
+                <reportElement x="170" y="0" width="150" height="20" uuid="b53d885f-624e-7d9a-1e1e-4c319a8a8e1e"/>
                 <textElement><font isBold="true"/></textElement>
                 <text><![CDATA[Customer]]></text>
             </staticText>
             <staticText>
-                <reportElement x="320" y="0" width="80" height="20" uuid="4c31-9a8a-8e1e-b53d-885f624e-7d9a"/>
+                <reportElement x="320" y="0" width="80" height="20" uuid="4c319a8a-8e1e-b53d-885f-624e7d9a1e1e"/>
                 <textElement textAlignment="Right"><font isBold="true"/></textElement>
                 <text><![CDATA[Amount]]></text>
             </staticText>

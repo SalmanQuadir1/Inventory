@@ -32,17 +32,17 @@
                 <text><![CDATA[Customer Name]]></text>
             </staticText>
             <staticText>
-                <reportElement x="200" y="0" width="100" height="20" uuid="b53d-885f624e7d9a-1e1e-4c31-9a8a8e1e"/>
+                <reportElement x="200" y="0" width="100" height="20" uuid="b53d885f-724e-7d9a-1e1e-4c319a8a8e1e"/>
                 <textElement><font isBold="true"/></textElement>
                 <text><![CDATA[Phone]]></text>
             </staticText>
             <staticText>
-                <reportElement x="300" y="0" width="100" height="20" uuid="4c31-9a8a8e1e-b53d-885f624e7d9a-1e1e"/>
+                <reportElement x="300" y="0" width="100" height="20" uuid="4c319a8a-8e1e-b53d-885f-624e7d9a1e1e"/>
                 <textElement textAlignment="Right"><font isBold="true"/></textElement>
                 <text><![CDATA[Outstanding]]></text>
             </staticText>
             <staticText>
-                <reportElement x="400" y="0" width="155" height="20" uuid="885f624e7d9a-4c31-9a8a8e1e-b53d-1e1e"/>
+                <reportElement x="400" y="0" width="155" height="20" uuid="885f624e-7d9a-4c31-9a8a-8e1e7d9a8e1e"/>
                 <textElement><font isBold="true"/></textElement>
                 <text><![CDATA[Store]]></text>
             </staticText>

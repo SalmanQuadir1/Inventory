@@ -84,7 +84,7 @@
                 <textFieldExpression><![CDATA[$F{referenceNumber}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="480" y="0" width="75" height="20" uuid="7e7e7e7e-7e7e-7e7e-7e7e-7e7e6e6e6e6e"/>
+                <reportElement x="480" y="0" width="75" height="20" uuid="7e7e7e7e-7e7e-7e7e-7e7e-6e6e6e6e6e6e"/>
                 <textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
             </textField>
         </band>
