@@ -30,6 +30,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final CustomerTransactionRepository transactionRepository;
     private final UserRepository userRepository;
+    private final com.medicalstore.inventory.service.SmsService smsService;
 
     private java.util.Set<Warehouse> getCurrentUserWarehouses() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -159,6 +160,13 @@ public class CustomerServiceImpl implements CustomerService {
                 .notes(notes)
                 .build();
         transactionRepository.save(tx);
+
+        // Send SMS Notification
+        if (customer.getPhone() != null && !customer.getPhone().isEmpty()) {
+            String msg = String.format("Dear %s, payment of ₹%.2f received. Current Balance: ₹%.2f. Thank you, FGH Store.", 
+                    customer.getName(), amount, customer.getTotalBalance());
+            smsService.sendSms(customer.getPhone(), msg);
+        }
     }
 
     @Override
@@ -182,6 +190,13 @@ public class CustomerServiceImpl implements CustomerService {
                 .transactionDate(LocalDateTime.now())
                 .build();
         transactionRepository.save(tx);
+
+        // Send SMS Notification
+        if (customer.getPhone() != null && !customer.getPhone().isEmpty()) {
+            String msg = String.format("Dear %s, credit sale of ₹%.2f recorded. Current Balance: ₹%.2f. Thank you, FGH Store.", 
+                    customer.getName(), amount, customer.getTotalBalance());
+            smsService.sendSms(customer.getPhone(), msg);
+        }
     }
 
     @Override
