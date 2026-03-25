@@ -51,6 +51,7 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public void deleteSupplier(Long id) {
         if (!supplierRepository.existsById(id)) {
             throw new ResourceNotFoundException("Supplier not found");
