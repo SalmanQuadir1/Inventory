@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import java.util.Set;
+import java.util.List;
 
 @Data
 public class UserDto {
@@ -26,6 +28,6 @@ public class UserDto {
     
     private boolean enabled = true;
     
-    private Long storeId;
-    private String storeName;
+    private Set<Long> warehouseIds;
+    private List<String> warehouseNames;
 }

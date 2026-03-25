@@ -118,13 +118,12 @@
                                     <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option>
                                 </select>
                             </div>
-                            <div class="space-y-1.5 mt-6">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Store / Branch Assignment</label>
-                                <select th:field="*{storeId}" class="block w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none appearance-none">
-                                    <option value="">-- All Stores (SuperAdmin) --</option>
+                             <div class="space-y-1.5 mt-6">
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Assigned Warehouses</label>
+                                <select th:field="*{warehouseIds}" multiple class="block w-full px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none appearance-none h-32">
                                     <option th:each="w : ${warehouses}" th:value="${w.id}" th:text="${w.name}"></option>
                                 </select>
-                                <p class="text-[10px] text-slate-400 font-medium ml-1 mt-1">Bind operator to a specific physical location.</p>
+                                <p class="text-[10px] text-slate-400 font-medium ml-1 mt-1">Bind operator to one or more physical locations. Hold Ctrl (Cmd) to select multiple.</p>
                             </div>
                             <div class="flex items-center p-4 bg-slate-50 rounded-2xl border border-slate-100 group cursor-pointer"
                                 onclick="document.getElementById('enabled1').click()">

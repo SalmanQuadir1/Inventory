@@ -9,7 +9,6 @@ import com.medicalstore.inventory.exception.ResourceNotFoundException;
 import com.medicalstore.inventory.repository.ProductRepository;
 import com.medicalstore.inventory.repository.SaleRepository;
 import com.medicalstore.inventory.repository.UserRepository;
-import com.medicalstore.inventory.entity.User;
 import com.medicalstore.inventory.entity.Warehouse;
 import com.medicalstore.inventory.service.SaleService;
 import lombok.RequiredArgsConstructor;
@@ -173,7 +172,7 @@ public class SaleServiceImpl implements SaleService {
     private Warehouse getCurrentUserStore() {
         String username = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(username)
-            .map(User::getStore)
+            .map(u -> u.getWarehouses().stream().findFirst().orElse(null))
             .orElse(null);
     }
 }

@@ -11,7 +11,6 @@ import com.medicalstore.inventory.repository.ProductRepository;
 import com.medicalstore.inventory.repository.PurchaseRepository;
 import com.medicalstore.inventory.repository.SupplierRepository;
 import com.medicalstore.inventory.repository.UserRepository;
-import com.medicalstore.inventory.entity.User;
 import com.medicalstore.inventory.entity.Warehouse;
 import com.medicalstore.inventory.service.PurchaseService;
 import lombok.RequiredArgsConstructor;
@@ -157,7 +156,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     private Warehouse getCurrentUserStore() {
         String username = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(username)
-            .map(User::getStore)
+            .map(u -> u.getWarehouses().stream().findFirst().orElse(null))
             .orElse(null);
     }
 }

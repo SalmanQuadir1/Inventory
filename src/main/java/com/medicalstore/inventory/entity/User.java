@@ -2,6 +2,8 @@ package com.medicalstore.inventory.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Table(name = "users")
@@ -36,7 +38,12 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private boolean enabled = true;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "warehouse_id")
-    private Warehouse store;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "user_warehouses",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "warehouse_id")
+    )
+    @Builder.Default
+    private Set<Warehouse> warehouses = new HashSet<>();
 }

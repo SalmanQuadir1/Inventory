@@ -31,11 +31,15 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerTransactionRepository transactionRepository;
     private final UserRepository userRepository;
 
-    private Warehouse getCurrentUserStore() {
+    private java.util.Set<Warehouse> getCurrentUserWarehouses() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(username)
-                .map(User::getStore)
-                .orElse(null);
+                .map(User::getWarehouses)
+                .orElse(java.util.Collections.emptySet());
+    }
+
+    private Warehouse getPrimaryWarehouse() {
+        return getCurrentUserWarehouses().stream().findFirst().orElse(null);
     }
 
     @Override
@@ -48,7 +52,7 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setAddress(dto.getAddress());
         customer.setTotalBalance(BigDecimal.ZERO);
         
-        Warehouse store = getCurrentUserStore();
+        Warehouse store = getPrimaryWarehouse();
         customer.setStore(store);
 
         Customer saved = customerRepository.save(customer);
@@ -92,10 +96,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<CustomerDto> getAllCustomersForStore() {
-        Warehouse store = getCurrentUserStore();
+        java.util.Set<Long> warehouseIds = getCurrentUserWarehouses().stream().map(Warehouse::getId).collect(Collectors.toSet());
         List<Customer> allCustomers = customerRepository.findAll();
-        if (store != null) {
-            allCustomers = allCustomers.stream().filter(c -> c.getStore() != null && c.getStore().getId().equals(store.getId())).collect(Collectors.toList());
+        if (!warehouseIds.isEmpty()) {
+            allCustomers = allCustomers.stream().filter(c -> c.getStore() != null && warehouseIds.contains(c.getStore().getId())).collect(Collectors.toList());
         }
         return allCustomers.stream().map(this::mapToDto).collect(Collectors.toList());
     }
@@ -107,11 +111,11 @@ public class CustomerServiceImpl implements CustomerService {
                 : Sort.by(sortField).descending();
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
 
-        Warehouse store = getCurrentUserStore();
+        java.util.Set<Long> warehouseIds = getCurrentUserWarehouses().stream().map(Warehouse::getId).collect(Collectors.toSet());
         
         List<Customer> allCustomers = customerRepository.findAll(sort);
-        if (store != null) {
-            allCustomers = allCustomers.stream().filter(c -> c.getStore() != null && c.getStore().getId().equals(store.getId())).collect(Collectors.toList());
+        if (!warehouseIds.isEmpty()) {
+            allCustomers = allCustomers.stream().filter(c -> c.getStore() != null && warehouseIds.contains(c.getStore().getId())).collect(Collectors.toList());
         }
         if (keyword != null && !keyword.trim().isEmpty()) {
             String kw = keyword.toLowerCase();

@@ -6,7 +6,6 @@ import com.medicalstore.inventory.service.ProductService;
 import com.medicalstore.inventory.service.SupplierService;
 import com.medicalstore.inventory.service.StockService;
 import com.medicalstore.inventory.repository.UserRepository;
-import com.medicalstore.inventory.entity.User;
 import com.medicalstore.inventory.entity.Warehouse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +41,8 @@ public class ProductController {
             @RequestParam(value = "sortDir", defaultValue = "asc") String sortDir,
             Model model) {
         
-        org.springframework.data.domain.Page<ProductDto> page = productService.getPaginatedProducts(pageNo, pageSize, sortField, sortDir, keyword, category);
+        java.util.Collection<Long> warehouseIds = getCurrentUserWarehouseIds();
+        org.springframework.data.domain.Page<ProductDto> page = productService.getPaginatedProducts(pageNo, pageSize, sortField, sortDir, keyword, category, warehouseIds);
         
         model.addAttribute("products", page.getContent());
         model.addAttribute("categories", productService.getDistinctCategories());
@@ -184,7 +184,8 @@ public class ProductController {
             @RequestParam(value = "category", required = false) String category,
             @RequestParam(value = "size", defaultValue = "20") int size) {
         
-        java.util.List<ProductDto> products = productService.getPaginatedProducts(1, size, "productName", "asc", keyword, category).getContent();
+        java.util.Collection<Long> warehouseIds = getCurrentUserWarehouseIds();
+        java.util.List<ProductDto> products = productService.getPaginatedProducts(1, size, "productName", "asc", keyword, category, warehouseIds).getContent();
         Warehouse store = getCurrentUserStore();
         
         if (store != null) {
@@ -207,10 +208,17 @@ public class ProductController {
         return products.stream().filter(p -> p.getQuantity() != null && p.getQuantity() > 0).collect(java.util.stream.Collectors.toList());
     }
 
+    private java.util.Collection<Long> getCurrentUserWarehouseIds() {
+        String username = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsername(username)
+            .map(u -> u.getWarehouses().stream().map(Warehouse::getId).collect(java.util.stream.Collectors.toSet()))
+            .orElse(java.util.Collections.emptySet());
+    }
+
     private Warehouse getCurrentUserStore() {
         String username = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsername(username)
-            .map(User::getStore)
+            .map(u -> u.getWarehouses().stream().findFirst().orElse(null))
             .orElse(null);
     }
 }

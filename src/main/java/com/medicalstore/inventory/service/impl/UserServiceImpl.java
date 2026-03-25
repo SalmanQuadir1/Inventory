@@ -35,9 +35,9 @@ public class UserServiceImpl implements UserService {
         User user = mapToEntity(userDto);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         
-        if (userDto.getStoreId() != null) {
-            Warehouse store = warehouseRepository.findById(userDto.getStoreId()).orElse(null);
-            user.setStore(store);
+        if (userDto.getWarehouseIds() != null && !userDto.getWarehouseIds().isEmpty()) {
+            java.util.Set<Warehouse> warehouses = new java.util.HashSet<>(warehouseRepository.findAllById(userDto.getWarehouseIds()));
+            user.setWarehouses(warehouses);
         }
         
         User savedUser = userRepository.save(user);
@@ -57,11 +57,11 @@ public class UserServiceImpl implements UserService {
             user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         }
         
-        if (userDto.getStoreId() != null) {
-            Warehouse store = warehouseRepository.findById(userDto.getStoreId()).orElse(null);
-            user.setStore(store);
+        if (userDto.getWarehouseIds() != null && !userDto.getWarehouseIds().isEmpty()) {
+            java.util.Set<Warehouse> warehouses = new java.util.HashSet<>(warehouseRepository.findAllById(userDto.getWarehouseIds()));
+            user.setWarehouses(warehouses);
         } else {
-            user.setStore(null);
+            user.getWarehouses().clear();
         }
         
         User updatedUser = userRepository.save(user);
@@ -124,9 +124,9 @@ public class UserServiceImpl implements UserService {
         dto.setRole(user.getRole());
         dto.setEnabled(user.isEnabled());
         
-        if (user.getStore() != null) {
-            dto.setStoreId(user.getStore().getId());
-            dto.setStoreName(user.getStore().getName());
+        if (user.getWarehouses() != null && !user.getWarehouses().isEmpty()) {
+            dto.setWarehouseIds(user.getWarehouses().stream().map(Warehouse::getId).collect(java.util.stream.Collectors.toSet()));
+            dto.setWarehouseNames(user.getWarehouses().stream().map(Warehouse::getName).collect(java.util.stream.Collectors.toList()));
         }
         
         return dto;
