@@ -24,6 +24,8 @@ public class ReportServiceImpl implements ReportService {
     private final SaleRepository saleRepository;
     private final PurchaseRepository purchaseRepository;
     private final ProductRepository productRepository;
+    private final com.medicalstore.inventory.repository.CustomerRepository customerRepository;
+    private final com.medicalstore.inventory.service.JasperReportService jasperReportService;
 
     @Override
     public Map<String, Object> getSalesReport(LocalDateTime start, LocalDateTime end) {
@@ -62,5 +64,78 @@ public class ReportServiceImpl implements ReportService {
         Map<String, Object> report = new HashMap<>();
         report.put("totalInventoryValue", totalValue != null ? totalValue : BigDecimal.ZERO);
         return report;
+    }
+
+    @Override
+    public java.io.ByteArrayInputStream exportProductsToExcel() throws Exception {
+        List<com.medicalstore.inventory.dto.ReportDto.ProductReport> data = productRepository.findAll().stream()
+                .map(p -> com.medicalstore.inventory.dto.ReportDto.ProductReport.builder()
+                        .id(p.getId())
+                        .productName(p.getProductName())
+                        .category(p.getCategory())
+                        .quantity(p.getQuantity())
+                        .purchasePrice(p.getPurchasePrice())
+                        .sellingPrice(p.getSellingPrice())
+                        .expiryDate(p.getExpiryDate())
+                        .build())
+                .collect(java.util.stream.Collectors.toList());
+        
+        return jasperReportService.exportToExcel("products", data, new HashMap<>());
+    }
+
+    @Override
+    public java.io.ByteArrayInputStream exportSalesToExcel(LocalDateTime start, LocalDateTime end) throws Exception {
+        List<com.medicalstore.inventory.dto.ReportDto.SaleReport> data = saleRepository.findSalesBetweenDates(start, end).stream()
+                .map(s -> com.medicalstore.inventory.dto.ReportDto.SaleReport.builder()
+                        .id(s.getId())
+                        .saleDate(s.getSaleDate())
+                        .customerName(s.getCustomerName())
+                        .totalAmount(s.getTotalAmount())
+                        .paymentMethod(s.getPaymentMethod())
+                        .status("COMPLETED") // Placeholder if no status field
+                        .build())
+                .collect(java.util.stream.Collectors.toList());
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("startDate", start.toString());
+        params.put("endDate", end.toString());
+        
+        return jasperReportService.exportToExcel("sales", data, params);
+    }
+
+    @Override
+    public java.io.ByteArrayInputStream exportPurchasesToExcel(LocalDateTime start, LocalDateTime end) throws Exception {
+        List<com.medicalstore.inventory.dto.ReportDto.PurchaseReport> data = purchaseRepository.findByPurchaseDateBetween(start.toLocalDate(), end.toLocalDate()).stream()
+                .map(p -> com.medicalstore.inventory.dto.ReportDto.PurchaseReport.builder()
+                        .id(p.getId())
+                        .purchaseDate(p.getPurchaseDate())
+                        .supplierName(p.getSupplier() != null ? p.getSupplier().getSupplierName() : "N/A")
+                        .totalAmount(p.getTotalAmount())
+                        .referenceNumber(p.getInvoiceNumber())
+                        .status("RECEIVED")
+                        .build())
+                .collect(java.util.stream.Collectors.toList());
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("startDate", start.toString());
+        params.put("endDate", end.toString());
+
+        return jasperReportService.exportToExcel("purchases", data, params);
+    }
+
+    @Override
+    public java.io.ByteArrayInputStream exportCustomersToExcel() throws Exception {
+        List<com.medicalstore.inventory.dto.ReportDto.CustomerReport> data = customerRepository.findAll().stream()
+                .map(c -> com.medicalstore.inventory.dto.ReportDto.CustomerReport.builder()
+                        .id(c.getId())
+                        .name(c.getName())
+                        .phone(c.getPhone())
+                        .email(c.getEmail())
+                        .totalBalance(c.getTotalBalance())
+                        .storeName(c.getStore() != null ? c.getStore().getName() : "Global")
+                        .build())
+                .collect(java.util.stream.Collectors.toList());
+
+        return jasperReportService.exportToExcel("customers", data, new HashMap<>());
     }
 }
