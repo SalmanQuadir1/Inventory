@@ -216,6 +216,21 @@
                         <span class="font-bold text-sm">Reports</span>
                     </a>
 
+                    <p sec:authorize="hasAnyRole('ADMIN', 'MANAGER')"
+                        class="px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mt-8 mb-4">
+                        Management Intelligence</p>
+                    <a sec:authorize="hasAnyRole('ADMIN', 'MANAGER')" th:href="@{/management/dashboard}"
+                        :class="currentPath.startsWith('/management') ? 'nav-link-active' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'"
+                        class="flex items-center px-4 py-3.5 rounded-2xl transition-all duration-200 group">
+                        <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z">
+                            </path>
+                        </svg>
+                        <span class="font-bold text-sm">Growth & Profits</span>
+                    </a>
+
                     <p sec:authorize="hasRole('ADMIN')"
                         class="px-3 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mt-8 mb-4">
                         Administration</p>

@@ -1,4 +1,4 @@
 package com.medicalstore.inventory.entity;
 public enum Role {
-    ADMIN, PHARMACIST, STAFF
+    ADMIN, PHARMACIST, STAFF, MANAGER
 }
