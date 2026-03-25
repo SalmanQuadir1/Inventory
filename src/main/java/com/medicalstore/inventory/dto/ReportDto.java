@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class ReportDto {
 
@@ -22,7 +20,7 @@ public class ReportDto {
         private Integer quantity;
         private BigDecimal purchasePrice;
         private BigDecimal sellingPrice;
-        private LocalDate expiryDate;
+        private String expiryDate;
     }
 
     @Data
@@ -31,7 +29,7 @@ public class ReportDto {
     @AllArgsConstructor
     public static class SaleReport {
         private Long id;
-        private LocalDateTime saleDate;
+        private String saleDate;
         private String customerName;
         private BigDecimal totalAmount;
         private String paymentMethod;
@@ -44,7 +42,7 @@ public class ReportDto {
     @AllArgsConstructor
     public static class PurchaseReport {
         private Long id;
-        private LocalDate purchaseDate;
+        private String purchaseDate;
         private String supplierName;
         private BigDecimal totalAmount;
         private String referenceNumber;

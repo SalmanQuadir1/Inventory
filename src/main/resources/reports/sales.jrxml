@@ -5,7 +5,7 @@
     <parameter name="startDate" class="java.lang.String"/>
     <parameter name="endDate" class="java.lang.String"/>
     <field name="id" class="java.lang.Long"/>
-    <field name="saleDate" class="java.time.LocalDateTime"/>
+    <field name="saleDate" class="java.lang.String"/>
     <field name="customerName" class="java.lang.String"/>
     <field name="totalAmount" class="java.math.BigDecimal"/>
     <field name="paymentMethod" class="java.lang.String"/>
@@ -66,7 +66,7 @@
                 <reportElement x="0" y="0" width="50" height="20" uuid="2e2e2e2e-2e2e-2e2e-2e2e-2e2e2e2e2e2e"/>
                 <textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
             </textField>
-            <textField pattern="yyyy-MM-dd HH:mm">
+            <textField>
                 <reportElement x="50" y="0" width="120" height="20" uuid="3e3e3e3e-3e3e-3e3e-3e3e-3e3e3e3e3e3e"/>
                 <textFieldExpression><![CDATA[$F{saleDate}]]></textFieldExpression>
             </textField>

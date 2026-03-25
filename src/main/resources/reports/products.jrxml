@@ -8,7 +8,7 @@
     <field name="quantity" class="java.lang.Integer"/>
     <field name="purchasePrice" class="java.math.BigDecimal"/>
     <field name="sellingPrice" class="java.math.BigDecimal"/>
-    <field name="expiryDate" class="java.time.LocalDate"/>
+    <field name="expiryDate" class="java.lang.String"/>
     <title>
         <band height="30">
             <staticText>
@@ -88,7 +88,7 @@
                 <textElement textAlignment="Right"/>
                 <textFieldExpression><![CDATA[$F{sellingPrice}]]></textFieldExpression>
             </textField>
-            <textField pattern="yyyy-MM-dd">
+            <textField>
                 <reportElement x="490" y="0" width="65" height="20" uuid="8e8e8e8e-8e8e-8e8e-8e8e-8e8e8e8e8e8e"/>
                 <textElement textAlignment="Center"/>
                 <textFieldExpression><![CDATA[$F{expiryDate}]]></textFieldExpression>

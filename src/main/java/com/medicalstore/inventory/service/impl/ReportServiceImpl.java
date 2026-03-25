@@ -9,6 +9,7 @@ import com.medicalstore.inventory.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.format.DateTimeFormatter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -68,6 +69,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public java.io.ByteArrayInputStream exportProductsToExcel() throws Exception {
+        DateTimeFormatter dateOnlyFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         List<com.medicalstore.inventory.dto.ReportDto.ProductReport> data = productRepository.findAll().stream()
                 .map(p -> com.medicalstore.inventory.dto.ReportDto.ProductReport.builder()
                         .id(p.getId())
@@ -76,7 +78,7 @@ public class ReportServiceImpl implements ReportService {
                         .quantity(p.getQuantity())
                         .purchasePrice(p.getPurchasePrice())
                         .sellingPrice(p.getSellingPrice())
-                        .expiryDate(p.getExpiryDate())
+                        .expiryDate(p.getExpiryDate() != null ? p.getExpiryDate().format(dateOnlyFormatter) : "")
                         .build())
                 .collect(java.util.stream.Collectors.toList());
         
@@ -85,14 +87,15 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public java.io.ByteArrayInputStream exportSalesToExcel(LocalDateTime start, LocalDateTime end) throws Exception {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         List<com.medicalstore.inventory.dto.ReportDto.SaleReport> data = saleRepository.findSalesBetweenDates(start, end).stream()
                 .map(s -> com.medicalstore.inventory.dto.ReportDto.SaleReport.builder()
                         .id(s.getId())
-                        .saleDate(s.getSaleDate())
+                        .saleDate(s.getSaleDate() != null ? s.getSaleDate().format(formatter) : "")
                         .customerName(s.getCustomerName())
                         .totalAmount(s.getTotalAmount())
                         .paymentMethod(s.getPaymentMethod())
-                        .status("COMPLETED") // Placeholder if no status field
+                        .status("COMPLETED")
                         .build())
                 .collect(java.util.stream.Collectors.toList());
 
@@ -105,10 +108,11 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public java.io.ByteArrayInputStream exportPurchasesToExcel(LocalDateTime start, LocalDateTime end) throws Exception {
+        DateTimeFormatter dateOnlyFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         List<com.medicalstore.inventory.dto.ReportDto.PurchaseReport> data = purchaseRepository.findByPurchaseDateBetween(start.toLocalDate(), end.toLocalDate()).stream()
                 .map(p -> com.medicalstore.inventory.dto.ReportDto.PurchaseReport.builder()
                         .id(p.getId())
-                        .purchaseDate(p.getPurchaseDate())
+                        .purchaseDate(p.getPurchaseDate() != null ? p.getPurchaseDate().format(dateOnlyFormatter) : "")
                         .supplierName(p.getSupplier() != null ? p.getSupplier().getSupplierName() : "N/A")
                         .totalAmount(p.getTotalAmount())
                         .referenceNumber(p.getInvoiceNumber())
