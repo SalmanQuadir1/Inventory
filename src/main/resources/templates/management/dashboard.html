@@ -70,20 +70,8 @@
             </div>
         </div>
 
-        <!-- Charts Row -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-6">Revenue & Profit Trend</h3>
-                <canvas id="growthChart" height="250"></canvas>
-            </div>
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <h3 class="text-lg font-bold text-gray-900 mb-6">Warehouse Performance</h3>
-                <canvas id="warehouseChart" height="250"></canvas>
-            </div>
-        </div>
-
         <!-- Tables Row -->
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 gap-8">
             <!-- Top Products -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
@@ -134,61 +122,5 @@
                 </div>
             </div>
         </div>
-
-        <!-- Chart.js Script -->
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script th:inline="javascript">
-            /*<![CDATA[*/
-            const trendData = /*[[${analytics.salesTrend}]]*/ [];
-            const warehouseData = /*[[${analytics.warehouseStats}]]*/ [];
-
-            // Growth Chart
-            new Chart(document.getElementById('growthChart'), {
-                type: 'line',
-                data: {
-                    labels: trendData.map(d => d.month).reverse(),
-                    datasets: [{
-                        label: 'Revenue',
-                        data: trendData.map(d => d.revenue).reverse(),
-                        borderColor: '#4f46e5',
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }, {
-                        label: 'Profit',
-                        data: trendData.map(d => d.profit).reverse(),
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } }
-                }
-            });
-
-            // Warehouse Chart
-            new Chart(document.getElementById('warehouseChart'), {
-                type: 'bar',
-                data: {
-                    labels: warehouseData.map(w => w.warehouseName),
-                    datasets: [{
-                        label: 'Profit Share',
-                        data: warehouseData.map(w => w.profit),
-                        backgroundColor: ['#818cf8', '#fbbf24', '#f472b6', '#34d399', '#60a5fa']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    plugins: { legend: { display: false } }
-                }
-            });
-            /*]]>*/
-        </script>
     </section>
 </th:block>

@@ -105,6 +105,22 @@
 			<artifactId>jasperreports-fonts</artifactId>
 			<version>6.20.0</version>
 		</dependency>
+		<!-- Additional Jasper dependencies for runtime stability -->
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.4</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-digester</groupId>
+			<artifactId>commons-digester</artifactId>
+			<version>2.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
